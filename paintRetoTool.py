@@ -59,7 +59,7 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         paintWhiteButton.clicked.connect(lambda : self.paintTool(1.0,1.0,1.0,1.0))
         paintWhiteButton.setStyleSheet("background-color : white")
         paintWhiteButton.setStyleSheet("color : black")
-
+        
         paintLayout.addWidget(paintBlackButton)
         paintLayout.addWidget(paintWhiteButton)
         
@@ -72,20 +72,17 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         QuadDrawTabBody.setLayout(QuadDrawLayout)
        
         # Black 
-        QuadDrawBlackStartButton = QtWidgets.QPushButton("Black START")
-        QuadDrawBlackStartButton.clicked.connect(self.deleteDuplicated) 
+        QuadDrawBlackStartButton = QtWidgets.QPushButton("Black")
         QuadDrawBlackStartButton.clicked.connect(lambda : self.quadToolBlack(0.0,0.0,0.0)) 
-       
 
-        QuadDrawBlackDoneButton = QtWidgets.QPushButton("Black DONE")
-        QuadDrawBlackDoneButton.clicked.connect(self.deleteDuplicated) 
+        QuadDrawDoneButton = QtWidgets.QPushButton("DONE")
+        QuadDrawDoneButton.clicked.connect(self.deleteDuplicated) 
 
         QuadDrawWhiteButton = QtWidgets.QPushButton("White")
-        QuadDrawWhiteButton.clicked.connect(self.deleteDuplicated) 
         QuadDrawWhiteButton.clicked.connect(lambda : self.quadToolBlack(1.0,1.0,1.0))
 
         QuadDrawLayout.addWidget(QuadDrawBlackStartButton)
-        QuadDrawLayout.addWidget(QuadDrawBlackDoneButton)
+        QuadDrawLayout.addWidget(QuadDrawDoneButton)
 
         QuadDrawLayout.addWidget(QuadDrawWhiteButton)
 
@@ -131,8 +128,6 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
     def group_and_copyVertices(self, color):
 
-        print("Enter : group_and_copyVertices")
-
         # Check the object is selected
         selection = cmds.ls(sl=True)
 
@@ -141,14 +136,8 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             # Get the vertices of the mesh
             vertices = cmds.ls(geo + ".vtx[*]", fl=True)
 
-            # Colors
-            black = [0.0,0.0,0.0]
-            white = [1.0,1.0,1.0]
-
             # Groups for each color
             group = []
-            groupBlack = []
-            groupWhite = []
 
             # Get the colour info of each vertex
             for vertex in vertices:
@@ -161,7 +150,6 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
                     group.append(vertex)
                     # print("group: ", group)
 
-
                 cmds.select(group)
                 cmds.InvertSelection()
                 cmds.ConvertSelectionToFaces()
@@ -169,8 +157,6 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
     def quadDrawTool(self):
 
-        print("Enter : quadDrawTool")
-        print(cmds.ls(sl = True))
         # Make the object live
         cmds.makeLive()
         
@@ -178,63 +164,28 @@ class MayaPaintToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         cmds.nexQuadDrawCtx()
 
     def quadToolBlack(self, R, G, B):
-        
-        print("Enter : quadToolBlack")
-        print(f"self.copied = {self.copied}")
-
-        # if self.copied == True:
-        #     self.deleteDuplicated()
-
-        print(f"self.copied = {self.copied}")
      
         duplicated = self.duplicateGeo()
         self.group_and_copyVertices([R,G,B])
         cmds.delete()
         cmds.select(duplicated)
-        print(cmds.ls(sl = True))
-
-        self.copied = True
 
         self.quadDrawTool()
-        
-        
-
-        # return duplicated
-
-    # def quadToolWhite(self):
-        
-
-    #     cmds.createDisplayLayer(name="display")
-
-    #     cmds.setAttr("display.displayType", 2)
-
-    #     cmds.select(duplicated)
-    #     return duplicated
-        
-
+              
     def deleteDuplicated(self):
 
-        if self.copied == True:
+        cmds.makeLive(none=True)
+
+        cmds.setToolTo("selectSuperContext")
+
+        cmds.select("duplicated")
+        cmds.delete("duplicated")
+
+        Mm.eval("layerEditorDeleteLayer display")
+
         
-            print("Enter: deleteDuplicated" )
-            print(f"self.copied = {self.copied}")
+        cmds.select(self.geo)
 
-            cmds.makeLive(none=True)
-            # cmds.QuadDrawTool()
-            cmds.setToolTo("selectSuperContext")
-
-            cmds.select("duplicated")
-            cmds.delete("duplicated")
-
-            Mm.eval("layerEditorDeleteLayer display")
-
-            
-            cmds.select(self.geo)
-
-            self.copied = False
-
-
-            
 if __name__ == "__main__":
    try:
        mayaPaintToolDialog.close()
