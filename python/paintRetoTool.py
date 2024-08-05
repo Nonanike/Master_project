@@ -13,7 +13,7 @@ from exampleTab import exampleTab
 
 from shiboken2 import wrapInstance
 from PySide2 import QtWidgets, QtGui, QtCore
-from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QSpacerItem, QSizePolicy
+from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QSpacerItem, QSizePolicy, QLineEdit
 import sys
 from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtCore import Qt
@@ -45,7 +45,8 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         # Select Mesh Button
         self.selectMeshButton = QtWidgets.QPushButton("Select Mesh")
-        self.selectMeshButton.clicked.connect(self.saveMesh)
+        self.selectMeshButton.clicked.connect(self.QuadDrawTab_instance.saveMesh)
+        self.selectMeshButton.clicked.connect(self.enableButtonsAfterClickSelect)
 
         # Select New Mesh Button
         self.selectNewMeshButton = QtWidgets.QPushButton("Choose a New Mesh")
@@ -75,12 +76,19 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         for button in self.allButtons:
             button.setEnabled(False)
 
+        for colors in self.allColorButtons:
+            colors.setEnabled(False)
+
     def enableButtonsAfterClickSelect(self):
         
         self.selectMeshButton.setEnabled(False)
 
         for button in self.allButtons:
             button.setEnabled(True)
+
+        for colors in self.allColorButtons:
+            colors.setEnabled(False)
+            colors.hide()
 
     def examplesTab(self):
 
@@ -190,11 +198,6 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         colorLayout = QtWidgets.QGridLayout()
         paintGroup.setLayout(colorLayout)
 
-        # Erase Paint Button
-        paintEraseButton = QtWidgets.QPushButton("Erase paint")
-        paintEraseButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.4,0.4,0.4,1.0))
-        paintEraseButton.setFixedSize(150, 50)
-
         # Black Paint Button
         paintBlackButton = QtWidgets.QPushButton("Black")
         paintBlackButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.0,0.0,0.0,1.0))
@@ -204,51 +207,59 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         # White Paint Button
         paintWhiteButton = QtWidgets.QPushButton("White")
         paintWhiteButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,1.0,1.0,1.0))
-        paintWhiteButton.setStyleSheet("background-color : white")
+        paintWhiteButton.setStyleSheet("background-color : #FFFFFF; color : black;")
         paintWhiteButton.setFixedSize(150, 50)
-        paintWhiteButton.setStyleSheet("color : black")
 
         # Red Paint Button
         paintRedButton = QtWidgets.QPushButton("Red")
         paintRedButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,0.0,0.0,1.0))
-        paintRedButton.setStyleSheet("background-color : red")
+        paintRedButton.setStyleSheet("background-color : #FF0000; color : black;")
         paintRedButton.setFixedSize(150, 50)
 
         # Green Paint Button
         paintGreenButton = QtWidgets.QPushButton("Green")
         paintGreenButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.0,1.0,0.0,1.0))
-        paintGreenButton.setStyleSheet("background-color : green")
+        paintGreenButton.setStyleSheet("background-color : #00FF00; color : black;")
         paintGreenButton.setFixedSize(150, 50)
 
         # Blue Paint Button
         paintBlueButton = QtWidgets.QPushButton("Blue")
         paintBlueButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.0,0.0,1.0,1.0))
-        paintBlueButton.setStyleSheet("background-color : blue")
+        paintBlueButton.setStyleSheet("background-color : #0000FF")
         paintBlueButton.setFixedSize(150, 50)
 
         # Yellow Paint Button
         paintYellowButton = QtWidgets.QPushButton("Yellow")
         paintYellowButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,1.0,0.0,1.0))
-        paintYellowButton.setStyleSheet("background-color : yellow")
+        paintYellowButton.setStyleSheet("background-color : #FFFF00; color : black;")
         paintYellowButton.setFixedSize(150, 50)
 
         # Orange Paint Button
         paintOrangeButton = QtWidgets.QPushButton("Orange")
         paintOrangeButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,0.5,0.0,1.0))
-        paintOrangeButton.setStyleSheet("background-color : orange")
+        paintOrangeButton.setStyleSheet("background-color : #FF8900")
         paintOrangeButton.setFixedSize(150, 50)
 
         # Pink Paint Button
         paintPinkButton = QtWidgets.QPushButton("Pink")
         paintPinkButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,0.0,0.5,1.0))
-        paintPinkButton.setStyleSheet("background-color : pink")
+        paintPinkButton.setStyleSheet("background-color : #FF00FF")
         paintPinkButton.setFixedSize(150, 50)
 
         # Purple Paint Button
         paintPurpleButton = QtWidgets.QPushButton("Purple")
-        paintPurpleButton.clicked.connect(lambda : self.paintTab_instance.paintTool(1.0,0.0,1.0,1.0))
-        paintPurpleButton.setStyleSheet("background-color : purple")
+        paintPurpleButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.5,0.0,0.5,1.0))
+        paintPurpleButton.setStyleSheet("background-color : #800080")
         paintPurpleButton.setFixedSize(150, 50)
+
+        # Erase Paint Button
+        paintEraseButton = QtWidgets.QPushButton("Erase paint")
+        paintEraseButton.clicked.connect(lambda : self.paintTab_instance.paintTool(0.4,0.4,0.4,1.0))
+        paintEraseButton.setFixedSize(150, 50)
+
+        # Exit the Tool Button
+        paintExitButton = QtWidgets.QPushButton("Exit the Paint Tool")
+        paintExitButton.clicked.connect(self.paintTab_instance.exitPaintTool)
 
         colorLayout.addWidget(paintBlackButton, 0, 0)
         colorLayout.addWidget(paintWhiteButton, 0, 1)
@@ -261,6 +272,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         colorLayout.addWidget(paintPurpleButton, 2, 2)
 
         colorLayout.addWidget(paintEraseButton, 3, 1)
+        colorLayout.addWidget(paintExitButton, 4, 1)
 
         self.allButtons += [paintBlackButton, paintWhiteButton, paintRedButton, paintGreenButton, paintBlueButton, paintYellowButton, paintOrangeButton, paintPinkButton, paintPurpleButton, paintEraseButton]
 
@@ -291,17 +303,36 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.slider.setTickInterval(10)
         self.slider.setMinimum(0.01)
         self.slider.setMaximum(10000.00)
+
+        # self.edit = QLineEdit()
+        # self.edit.setFixedSize(50,30)
+        # self.edit.setText(str(self.slider.value()))
  
         self.slider.valueChanged.connect(self.changedValue)
+        # self.slider.valueChanged.connect(self.changedValue)
+        # self.edit.textChanged.connect(self.syncValues)
  
-        self.sliderLabel = QLabel("0.1")
+        self.sliderLabel = QLabel("0.01")
         self.sliderLabel.setFont(QtGui.QFont("Sanserif", 10))
         self.sliderLabel.setGeometry(140, 40, 30, 30)
 
+        # sliderLayout.addWidget(self.edit)
         sliderLayout.addWidget(self.sliderLabel)
         sliderLayout.addWidget(self.slider)
 
         self.brushLayout.addWidget(sliderGroup)
+
+    # def changedValue(self, size):
+
+    #     size = self.sliderLabel.setText(str(self.size)) /100.0
+    #     self.edit.setText(str(self.size))
+    #     cmds.artAttrPaintVertexCtx(cmds.currentCtx(), e=True, radius = (size))
+
+    # def syncValues(self, text):
+            
+    #         self.size = int(text)
+    #         if 0.00 <= self.size <= 100.00:
+    #             self.slider.setValue(self.size)
 
     def changedValue(self):
         size = self.slider.value() / 100.0
@@ -321,6 +352,8 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
     def quadDrawTool(self):
 
+        self.allColorButtons = []
+
         quadDrawGroup = QtWidgets.QGroupBox("QuadDraw tool")
 
         quadLayout = QtWidgets.QGridLayout()
@@ -331,26 +364,108 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.QuadDrawStartButton = QtWidgets.QPushButton("START")
         self.QuadDrawStartButton.clicked.connect(self.QuadDrawTab_instance.quadDrawTool) 
         self.QuadDrawStartButton.clicked.connect(self.disableSTART)
+        # self.QuadDrawStartButton.clicked.connect(self.enableFocus)
+        self.QuadDrawStartButton.clicked.connect(self.disableColors)
         self.QuadDrawStartButton.setFixedWidth(150)
+
+        # Focus Button
+        self.QuadFocusButton = QtWidgets.QPushButton("Focus on only one color")
+        self.QuadFocusButton.setEnabled(False)
+        self.QuadFocusButton.clicked.connect(self.enableColors) 
+
+        # Black Button
+        self.QuadBlackButton = QtWidgets.QPushButton("Black")
+        self.QuadBlackButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(0.0,0.0,0.0)) 
+        self.QuadBlackButton.setStyleSheet("background-color : black")
+
+        # White Button
+        self.QuadWhiteButton = QtWidgets.QPushButton("White")
+        self.QuadWhiteButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(1.0,1.0,1.0))
+        self.QuadWhiteButton.setStyleSheet("background-color : #FFFFFF; color : black;")
+
+        # Red Button
+        self.QuadRedButton = QtWidgets.QPushButton("Red")
+        self.QuadRedButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(1.0,0.0,0.0))
+        self.QuadRedButton.setStyleSheet("background-color : #FF0000; color : black;")
+
+        # Green Button
+        self.QuadGreenButton = QtWidgets.QPushButton("Green")
+        self.QuadGreenButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(0.0,1.0,0.0))
+        self.QuadGreenButton.setStyleSheet("background-color : #00FF00; color : black;")
+
+        # Blue Button
+        self.QuadBlueButton = QtWidgets.QPushButton("Blue")
+        self.QuadBlueButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(0.0,0.0,1.0))
+        self.QuadBlueButton.setStyleSheet("background-color : #0000FF")
+
+        # Yellow Button
+        self.QuadYellowButton = QtWidgets.QPushButton("Yellow")
+        self.QuadYellowButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(1.0,1.0,0.0))
+        self.QuadYellowButton.setStyleSheet("background-color : #FFFF00; color : black;")
+
+        # Orange Button
+        self.QuadOrangeButton = QtWidgets.QPushButton("Orange")
+        self.QuadOrangeButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(1.0,0.5,0.0))
+        self.QuadOrangeButton.setStyleSheet("background-color : #FF8900")
+
+        # Pink Button
+        self.QuadPinkButton = QtWidgets.QPushButton("Pink")
+        self.QuadPinkButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(1.0,0.0,0.5))
+        self.QuadPinkButton.setStyleSheet("background-color : #FF00FF")
+
+        # Purple Button
+        self.QuadPurpleButton = QtWidgets.QPushButton("Purple")
+        self.QuadPurpleButton.clicked.connect(lambda : self.QuadDrawTab_instance.quadToolColor(0.5,0.0,0.5))
+        self.QuadPurpleButton.setStyleSheet("background-color : #800080")
 
         # Done Button
         self.QuadDrawDoneButton = QtWidgets.QPushButton("DONE")
         self.QuadDrawDoneButton.clicked.connect(self.QuadDrawTab_instance.deleteDuplicated)
         self.QuadDrawDoneButton.clicked.connect(self.enableSTART)
+        self.QuadDrawDoneButton.clicked.connect(self.disableColors)
         self.QuadDrawStartButton.setFixedWidth(150)
 
-        quadLayout.addWidget(self.QuadDrawStartButton)
-        quadLayout.addWidget(self.QuadDrawDoneButton)
+        quadLayout.addWidget(self.QuadDrawStartButton, 0, 1)
+        quadLayout.addWidget(self.QuadFocusButton, 1, 1)
+
+        quadLayout.addWidget(self.QuadBlackButton, 2, 0)
+        quadLayout.addWidget(self.QuadWhiteButton, 2, 1)
+        quadLayout.addWidget(self.QuadRedButton, 2, 2)
+        quadLayout.addWidget(self.QuadGreenButton, 3, 0)
+        quadLayout.addWidget(self.QuadBlueButton, 3, 1)
+        quadLayout.addWidget(self.QuadYellowButton, 3, 2)
+        quadLayout.addWidget(self.QuadOrangeButton, 4, 0)
+        quadLayout.addWidget(self.QuadPinkButton, 4, 1)
+        quadLayout.addWidget(self.QuadPurpleButton, 4, 2)
+
+        quadLayout.addWidget(self.QuadDrawDoneButton, 5, 1)
 
         self.QuadDrawLayout.addWidget(quadDrawGroup)
 
         self.allButtons += [self.QuadDrawStartButton, self.QuadDrawDoneButton]
+        self.allColorButtons += [self.QuadBlackButton, self.QuadWhiteButton, self.QuadRedButton, self.QuadGreenButton, self.QuadBlueButton, self.QuadYellowButton, self.QuadOrangeButton, self.QuadPinkButton, self.QuadPurpleButton]
 
     def enableSTART(self):
         self.QuadDrawStartButton.setEnabled(True)
+        self.QuadFocusButton.setEnabled(False)
 
     def disableSTART(self):
         self.QuadDrawStartButton.setEnabled(False)
+        self.QuadFocusButton.setEnabled(True)
+
+    def enableColors(self):
+
+        self.QuadFocusButton.setEnabled(False)
+
+        for button in self.allColorButtons:
+            button.show()
+            button.setEnabled(True)
+
+    def disableColors(self):
+
+        for button in self.allColorButtons:
+            button.setEnabled(False)
+            button.hide()
 
     def quadDrawText(self):
 
@@ -374,15 +489,6 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         quadDrawTextLayout.addWidget(text2)
 
         self.QuadDrawLayout.addWidget(quadDrawTextGroup)
-
-    def saveMesh(self):
-        mesh = cmds.ls(sl=True, fl=True)
-        print(mesh)
-
-        cmds.select(clear = True)
-        cmds.select(mesh)
-
-        self.enableButtonsAfterClickSelect()
 
 if __name__ == "__main__":
    try:

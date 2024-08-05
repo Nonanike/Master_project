@@ -8,4 +8,6 @@ class PaintTab():
         # Modify the color value of the painting context
         cmds.artAttrPaintVertexCtx(cmds.currentCtx(),e = True, colorRGBAValue = (R, G, B, A ))
 
-    
+    def exitPaintTool(self):
+        
+        cmds.setToolTo("selectSuperContext")
