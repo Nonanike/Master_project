@@ -1,26 +1,19 @@
 import maya.cmds as cmds
-import maya.mel as Mm
+import maya.mel as Mmmesh
 
 
 class quadDrawTab():
-
-    def saveGeo(self):
-        geo = cmds.ls(sl=True, fl=True)
-        print(geo)
-
-        cmds.select(clear = True)
-        cmds.select(geo)
-
-    def duplicateGeo(self):
+    
+    def duplicateMesh(self):
         
-        self.geo = cmds.ls(sl=True, fl=True)
+        self.mesh = cmds.ls(sl=True, fl=True)
 
-        cmds.select(self.geo)
+        cmds.select(self.mesh)
    
         duplicated = cmds.duplicate(name="duplicated")
 
         cmds.select(clear = True)
-        cmds.select(self.geo)
+        cmds.select(self.mesh)
 
         cmds.createDisplayLayer(name="display")
 
@@ -32,7 +25,7 @@ class quadDrawTab():
 
     def quadDrawTool(self):
 
-        duplicated = self.duplicateGeo()
+        duplicated = self.duplicateMesh()
         cmds.select(duplicated)
 
         # Make the object live
@@ -52,6 +45,7 @@ class quadDrawTab():
 
         Mm.eval("layerEditorDeleteLayer display")
 
-        cmds.select(self.geo)
+        cmds.select(self.mesh)
         cmds.scale(0.9, 0.9, 0.9)
         cmds.translate()
+        # cmds.select("polySurface1")
