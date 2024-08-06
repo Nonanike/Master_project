@@ -274,7 +274,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         colorLayout.addWidget(paintEraseButton, 3, 1)
         colorLayout.addWidget(paintExitButton, 4, 1)
 
-        self.allButtons += [paintBlackButton, paintWhiteButton, paintRedButton, paintGreenButton, paintBlueButton, paintYellowButton, paintOrangeButton, paintPinkButton, paintPurpleButton, paintEraseButton]
+        self.allButtons += [paintBlackButton, paintWhiteButton, paintRedButton, paintGreenButton, paintBlueButton, paintYellowButton, paintOrangeButton, paintPinkButton, paintPurpleButton, paintEraseButton, paintExitButton]
 
         self.paintLayout.addWidget(paintGroup)
 
@@ -300,44 +300,40 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.slider = QSlider()
         self.slider.setOrientation(Qt.Horizontal)
         self.slider.setTickPosition(QSlider.TicksBelow)
-        self.slider.setTickInterval(10)
-        self.slider.setMinimum(0.01)
-        self.slider.setMaximum(10000.00)
+        self.slider.setTickInterval(0.1)
+        self.slider.setSingleStep(0.1)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10000)
 
-        # self.edit = QLineEdit()
-        # self.edit.setFixedSize(50,30)
-        # self.edit.setText(str(self.slider.value()))
+        self.editValue = QLineEdit()
+        self.editValue.setFixedSize(50,30)
+        self.editValue.setText("0")
  
-        self.slider.valueChanged.connect(self.changedValue)
-        # self.slider.valueChanged.connect(self.changedValue)
-        # self.edit.textChanged.connect(self.syncValues)
- 
-        self.sliderLabel = QLabel("0.01")
-        self.sliderLabel.setFont(QtGui.QFont("Sanserif", 10))
-        self.sliderLabel.setGeometry(140, 40, 30, 30)
+        self.slider.valueChanged.connect(self.syncValues)
+        self.editValue.textChanged.connect(self.changedValue)
 
-        # sliderLayout.addWidget(self.edit)
-        sliderLayout.addWidget(self.sliderLabel)
+        sliderLayout.addWidget(self.editValue)
         sliderLayout.addWidget(self.slider)
 
         self.brushLayout.addWidget(sliderGroup)
 
-    # def changedValue(self, size):
+    def syncValues(self, size):
 
-    #     size = self.sliderLabel.setText(str(self.size)) /100.0
-    #     self.edit.setText(str(self.size))
-    #     cmds.artAttrPaintVertexCtx(cmds.currentCtx(), e=True, radius = (size))
-
-    # def syncValues(self, text):
-            
-    #         self.size = int(text)
-    #         if 0.00 <= self.size <= 100.00:
-    #             self.slider.setValue(self.size)
-
-    def changedValue(self):
-        size = self.slider.value() / 100.0
-        self.sliderLabel.setText(str(size))
+        size = self.slider.value() / 100
+        self.editValue.setText(str(size))
         cmds.artAttrPaintVertexCtx(cmds.currentCtx(), e=True, radius = (size))
+
+    def changedValue(self, text):
+            
+            # change text from editText to a float and assign it to the slider
+            size = float(text)
+            sliderValue = int(size * 100)
+            self.slider.setValue(sliderValue) 
+
+    # def changedValue(self):
+    #     size = self.slider.value() / 100.0
+    #     self.sliderLabel.setText(str(size))
+    #     cmds.artAttrPaintVertexCtx(cmds.currentCtx(), e=True, radius = (size))
         
     def QuadDrawTab(self):
         
