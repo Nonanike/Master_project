@@ -124,7 +124,7 @@ class quadDrawTab():
         cmds.delete()
         cmds.select(copyColor)
         cmds.polyColorPerVertex( rgb=(0.4, 0.4, 0.4) )
-        cmds.scale(1.01, 1.01, 1.01)
+        cmds.scale(1.01,1.01,1.01)
         cmds.select(self.mesh)
 
         quadDrawTab.copied = True

@@ -1,5 +1,5 @@
 import maya.cmds as cmds
-import maya.OpenMaya as OpenMaya
+# import maya.OpenMaya as OpenMaya
 # import maya.api.OpenMayaUI as OpenMayaUI
 import maya.OpenMayaUI as OpenMayaUI
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
@@ -10,10 +10,11 @@ import sys
 from paintTab import PaintTab
 from quadDrawTab import quadDrawTab
 from exampleTab import exampleTab
+from templateTab import useTemplate
 
 from shiboken2 import wrapInstance
 from PySide2 import QtWidgets, QtGui, QtCore
-from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QSpacerItem, QSizePolicy, QLineEdit
+from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QSpacerItem, QSizePolicy, QLineEdit, QCheckBox
 import sys
 from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtCore import Qt
@@ -33,6 +34,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.paintTab_instance = PaintTab()
         self.QuadDrawTab_instance = quadDrawTab()
         self.exampleTab_instance = exampleTab()
+        self.templateTab_instance = useTemplate()
 
         self.setWindowTitle("Paint and retopology tool")
         self.resize(200, 500)
@@ -51,6 +53,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         # Select New Mesh Button
         self.selectNewMeshButton = QtWidgets.QPushButton("Choose a New Mesh")
         self.selectNewMeshButton.clicked.connect(self.diasableAllButtons)
+        self.selectNewMeshButton.clicked.connect(self.resetPaintTab)
 
         self.mainLayout.addWidget(self.selectMeshButton)
         self.mainLayout.addWidget(self.selectNewMeshButton)
@@ -60,6 +63,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.mainLayout.addWidget(self.tabMenu)
         self.examplesTab()
         self.paintTab()
+        self.templateTab()
         self.QuadDrawTab()
 
         self.diasableAllButtons()
@@ -78,6 +82,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         for colors in self.allColorButtons:
             colors.setEnabled(False)
+            colors.hide()
 
     def enableButtonsAfterClickSelect(self):
         
@@ -144,27 +149,39 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         # First ref image
         image1 = QLabel(self)
-        pixmap1 = QPixmap('/home/s5325378/Desktop/masters_project/images/test.PNG')
+        pixmap1 = QPixmap('/home/s5325378/Desktop/masters_project/images/head_stylised.jpeg')
         scaledImage1 = pixmap1.scaledToHeight(100, Qt.SmoothTransformation)
         image1.setPixmap(scaledImage1)
         image1.resize(scaledImage1.width(), scaledImage1.height())
 
         # First ref button 
         image1Button = QtWidgets.QPushButton("Create a reference plate")
-        image1Button.clicked.connect(lambda : self.exampleTab_instance.createImagePlane("/home/s5325378/Desktop/masters_project/images/test.PNG"))
+        image1Button.clicked.connect(lambda : self.exampleTab_instance.createImagePlane("/home/s5325378/Desktop/masters_project/images/head_stylised.jpeg"))
         image1Button.setFixedSize(220, 50)
 
         # Second ref image
         image2 = QLabel(self)
-        pixmap2 = QPixmap('/home/s5325378/Desktop/masters_project/images/test.jpg')
-        scaledImage2 = pixmap2.scaledToHeight(100, Qt.SmoothTransformation)
+        pixmap2 = QPixmap('/home/s5325378/Desktop/masters_project/images/hand_stylised.jpeg')
+        scaledImage2 = pixmap2.scaledToHeight(125, Qt.SmoothTransformation)
         image2.setPixmap(scaledImage2)
         image2.resize(scaledImage2.width(), scaledImage2.height())
 
         # Second ref button 
         image2Button = QtWidgets.QPushButton("Create a reference plate")
-        image2Button.clicked.connect(lambda : self.exampleTab_instance.createImagePlane("/home/s5325378/Desktop/masters_project/images/test.jpg"))
+        image2Button.clicked.connect(lambda : self.exampleTab_instance.createImagePlane("/home/s5325378/Desktop/masters_project/images/hand_stylised.jpeg"))
         image2Button.setFixedSize(220, 50)
+
+        # Third ref image
+        image3 = QLabel(self)
+        pixmap3 = QPixmap('/home/s5325378/Desktop/masters_project/images/head_normal.jpeg')
+        scaledImage3 = pixmap3.scaledToHeight(100, Qt.SmoothTransformation)
+        image3.setPixmap(scaledImage3)
+        image3.resize(scaledImage3.width(), scaledImage3.height())
+
+        # Third ref button 
+        image3Button = QtWidgets.QPushButton("Create a reference plate")
+        image3Button.clicked.connect(lambda : self.exampleTab_instance.createImagePlane("/home/s5325378/Desktop/masters_project/images/head_normal.jpeg"))
+        image3Button.setFixedSize(220, 50)
 
         imagesLayout.addWidget(spacerLeft)
         imagesLayout.addItem(verticalSpacerL, 0, 0)
@@ -175,8 +192,11 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         imagesLayout.addWidget(image2, 0, 2)
         imagesLayout.addWidget(image2Button, 1, 2)
 
-        imagesLayout.addWidget(spacerRight)
-        imagesLayout.addItem(verticalSpacerR, 0, 3)
+        # imagesLayout.addWidget(spacerRight)
+        # imagesLayout.addItem(verticalSpacerR, 0, 3)
+
+        imagesLayout.addWidget(image3, 0, 3)
+        imagesLayout.addWidget(image3Button, 1, 3)
 
         self.examplesLayout.addWidget(imagesGroup)
 
@@ -284,11 +304,12 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         self.brushLayout = QtWidgets.QVBoxLayout()
         brushGroup.setLayout(self.brushLayout)
-        brushGroup.setFixedHeight(100)
+        brushGroup.setFixedHeight(200)
 
         self.paintLayout.addWidget(brushGroup)
         
         self.createSlider()
+        self.activateSymmetry()
 
     def createSlider(self):
         
@@ -330,10 +351,90 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             sliderValue = int(size * 100)
             self.slider.setValue(sliderValue) 
 
-    # def changedValue(self):
-    #     size = self.slider.value() / 100.0
-    #     self.sliderLabel.setText(str(size))
-    #     cmds.artAttrPaintVertexCtx(cmds.currentCtx(), e=True, radius = (size))
+    def activateSymmetry(self):
+
+        symmetryGroup = QtWidgets.QGroupBox()
+
+        symmetryLayout = QtWidgets.QHBoxLayout()
+        symmetryGroup.setLayout(symmetryLayout)
+
+        symmetryButton = QtWidgets.QPushButton("Activate the symmetry")
+        symmetryButton.clicked.connect(self.paintTab_instance.activateSymmetry)
+
+        deSymmetryButton = QtWidgets.QPushButton("Deactivate the symmetry")
+        deSymmetryButton.clicked.connect(self.paintTab_instance.deactivateSymmetry)
+
+        symmetryCheckboxX = QCheckBox("X", self)
+        symmetryCheckboxX.clicked.connect(lambda : self.paintTab_instance.symmetryAxis("x"))
+
+        symmetryCheckboxY = QCheckBox("Y", self)
+        symmetryCheckboxY.clicked.connect(lambda : self.paintTab_instance.symmetryAxis("y"))
+
+        symmetryCheckboxZ = QCheckBox("Z", self)
+        symmetryCheckboxZ.clicked.connect(lambda : self.paintTab_instance.symmetryAxis("z"))
+
+        symmetryLayout.addWidget(symmetryButton)
+        symmetryLayout.addWidget(deSymmetryButton)
+        symmetryLayout.addWidget(symmetryCheckboxX)
+        symmetryLayout.addWidget(symmetryCheckboxY)
+        symmetryLayout.addWidget(symmetryCheckboxZ)
+
+        self.allButtons += [symmetryButton]
+
+        self.brushLayout.addWidget(symmetryGroup)
+
+    def templateTab(self):
+
+        templateTabBody = QtWidgets.QWidget()
+        self.tabMenu.addTab(templateTabBody, "Use reference template")
+
+        self.templateLayout = QtWidgets.QGridLayout()
+        templateTabBody.setLayout(self.templateLayout)
+
+        # First ref image
+        image1 = QLabel(self)
+        pixmap1 = QPixmap('/home/s5325378/Desktop/masters_project/images/head_normal2.png')
+        scaledImage1 = pixmap1.scaledToHeight(100, Qt.SmoothTransformation)
+        image1.setPixmap(scaledImage1)
+        image1.resize(scaledImage1.width(), scaledImage1.height())
+
+        # Button1
+        useButton1 = QtWidgets.QPushButton("Use this")
+        useButton1.clicked.connect(lambda : self.templateTab_instance.shaderCreator("/home/s5325378/Desktop/masters_project/images/head_normal2.png"))
+        useButton1.clicked.connect(self.hideFocusButton)
+
+        # Second ref image
+        image2 = QLabel(self)
+        pixmap2 = QPixmap('/home/s5325378/Desktop/masters_project/images/head_stylised.jpeg')
+        scaledImage2 = pixmap2.scaledToHeight(100, Qt.SmoothTransformation)
+        image2.setPixmap(scaledImage2)
+        image2.resize(scaledImage2.width(), scaledImage2.height())
+
+        # Button2
+        useButton2 = QtWidgets.QPushButton("Use this")
+        useButton2.clicked.connect(lambda : self.templateTab_instance.shaderCreator("/home/s5325378/Desktop/masters_project/images/head_stylised.jpeg"))
+        useButton2.clicked.connect(self.hideFocusButton)
+
+        # Adjust button
+        adjustButton = QtWidgets.QPushButton("Use UVs size to the reference")
+        adjustButton.clicked.connect(lambda : self.templateTab_instance.adjustUVs())
+
+        # Paint button
+        paintButton = QtWidgets.QPushButton("Paint")
+        paintButton.clicked.connect(self.templateTab_instance.selectObjectMode)
+        paintButton.clicked.connect(self.unhidePaintTab)
+
+        doneButton = QtWidgets.QPushButton("Done")
+        doneButton.clicked.connect(lambda : self.templateTab_instance.doneTemplate())
+
+        self.templateLayout.addWidget(image1, 0, 0)
+        self.templateLayout.addWidget(useButton1, 1, 0)
+        self.templateLayout.addWidget(image2, 0, 1)
+        self.templateLayout.addWidget(useButton2, 1, 1)
+        self.templateLayout.addWidget(adjustButton, 2, 0)
+        self.templateLayout.addWidget(paintButton, 2, 1)
+        self.templateLayout.addWidget(doneButton, 3, 0)
+
         
     def QuadDrawTab(self):
         
@@ -462,6 +563,18 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         for button in self.allColorButtons:
             button.setEnabled(False)
             button.hide()
+
+    def hideFocusButton(self):
+
+        self.QuadFocusButton.hide()
+        self.tabMenu.setTabEnabled(1, False)
+
+    def unhidePaintTab(self):
+        self.tabMenu.setTabEnabled(1, True)
+        self.tabMenu.setCurrentIndex(1)
+
+    def resetPaintTab(self):
+        self.tabMenu.setTabEnabled(1, True)
 
     def quadDrawText(self):
 
