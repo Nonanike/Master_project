@@ -48,11 +48,11 @@ class useTemplate():
         # Connecting file node with myShader
         cmds.connectAttr(self.myFile + '.outColor', self.myShader + '.color', f=True)
 
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        filePath = os.path.join(scriptDir, relPath)
+        # scriptDir = os.path.dirname(os.path.abspath(__file__))
+        # filePath = fPath
 
         # Setting the path to the file
-        cmds.setAttr(self.myFile + '.fileTextureName', filePath, typ="string")
+        cmds.setAttr(self.myFile + '.fileTextureName', self.relativePath(relPath), typ="string")
 
         # Creating myShaderGroup
         self.mySG = cmds.sets( name='myShaderGroup', renderable=True, empty=True, noSurfaceShader=True)
@@ -130,3 +130,10 @@ class useTemplate():
 
         cmds.selectType(objectComponent=True)
         cmds.selectMode(object=True)
+
+    def relativePath(self, relPath):
+
+        scriptDir = os.path.dirname(os.path.abspath(__file__))
+        filePath = os.path.join(scriptDir, relPath)
+
+        return filePath
