@@ -29,7 +29,7 @@ def createMod(location):
        with open(modulePath, "w") as file:
            file.write(f"+ MayaPaintRetoTool 1.0 {currentDir}\n")
            file.write("MAYA_PLUG_IN_PATH +:= plugins\n")
-           file.write("PYTHONPATH +:= python\n")
+           file.write("PYTHONPATH +:= src\n")
            file.write("ICONS +:= images")
    print("module installed")
 
@@ -40,7 +40,7 @@ def moveShelfScript(location, opSys):
    shelfFile = pathlib.Path.joinpath(shelfDir, "shelf_PaintAndRetopologyTool.mel")
    locationShelfFile = pathlib.Path.joinpath(location, "2023/prefs")
    locationShelfFile = pathlib.Path.joinpath(locationShelfFile, "shelves")
-#    path = pathlib.Path(locationShelfFile)
+   path = pathlib.Path(locationShelfFile)
 
    locationShelfFile.mkdir(exist_ok=True)
 
