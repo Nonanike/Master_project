@@ -506,7 +506,7 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         templateTextGroup.setLayout(templateTextLayout)
         templateTextGroup.setFixedHeight(200)
 
-        text = QLabel("FOR FACES ONLY!")
+        text = QLabel("FOR FACES ONLY! Any paint job done before this will be erased!")
                       
         text2 = QLabel("If you wish to use one of the provided templates please remember that it is only projecting on the front of the face "
                       "and might need some adjusting of the UVs inside the UV Editor with 'Adjust UVs size to the reference' button. "
@@ -687,6 +687,10 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.QuadDrawDoneButton.clicked.connect(self.disableColors)
         self.QuadDrawStartButton.setFixedWidth(150)
 
+        # Mirror Button
+        self.mirrorButton = QtWidgets.QPushButton("Mirror")
+        self.mirrorButton.clicked.connect(self.QuadDrawTab_instance.mirror)
+
         quadLayout.addWidget(self.QuadDrawStartButton, 0, 1)
         quadLayout.addWidget(self.QuadFocusButton, 1, 1)
 
@@ -700,11 +704,13 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         quadLayout.addWidget(self.QuadPinkButton, 4, 1)
         quadLayout.addWidget(self.QuadPurpleButton, 4, 2)
 
-        quadLayout.addWidget(self.QuadDrawDoneButton, 5, 1)
+        quadLayout.addWidget(self.mirrorButton, 5, 1)
+
+        quadLayout.addWidget(self.QuadDrawDoneButton, 6, 1)
 
         self.QuadDrawLayout.addWidget(quadDrawGroup)
 
-        self.allButtons += [self.QuadDrawStartButton, self.QuadDrawDoneButton]
+        self.allButtons += [self.QuadDrawStartButton, self.QuadDrawDoneButton, self.mirrorButton]
         self.allColorButtons += [self.QuadBlackButton, self.QuadWhiteButton, self.QuadRedButton, self.QuadGreenButton, self.QuadBlueButton, self.QuadYellowButton, self.QuadOrangeButton, self.QuadPinkButton, self.QuadPurpleButton]
 
     def enableSTART(self):
@@ -747,10 +753,17 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         quadDrawTextLayout = QtWidgets.QGridLayout()
         quadDrawTextGroup.setLayout(quadDrawTextLayout)
-        quadDrawTextGroup.setFixedHeight(150)
-
-        text = QLabel("To create a new polygon, after placing 4 vertices, click ")
-        text2 = QLabel("SHIFT + LEFT MOUSE")
+        quadDrawTextGroup.setFixedHeight(250)
+        
+        text = QLabel("Remember if both sides of your mesh look the same just use ")
+        text2 = QLabel("'Mirror'")
+        text3 = QLabel("button which means you only have to do half of the character. ")
+        text4 = QLabel("To create a new polygon, after placing 4 vertices, click ")
+        text5 = QLabel("SHIFT + LEFT MOUSE")
+        text6 = QLabel("To relax the mesh press ")
+        text7 = QLabel("SHIFT")
+        text8 = QLabel("To add edge loops press")
+        text9 = QLabel("CTRL + LEFT MOUSE")
         
         text.setFont(QtGui.QFont("Sanserif", 10))
         text.setWordWrap(True)
@@ -759,8 +772,43 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         text2.setWordWrap(True)
         text2.setAlignment(Qt.AlignCenter)
 
+        text3.setFont(QtGui.QFont("Sanserif", 10))
+        text3.setWordWrap(True)
+        text3.setAlignment(Qt.AlignCenter)
+
+        text4.setFont(QtGui.QFont("Sanserif", 10))
+        text4.setWordWrap(True)
+        text4.setAlignment(Qt.AlignCenter)
+
+        text5.setFont(QtGui.QFont("Sanserif", 10))
+        text5.setWordWrap(True)
+        text5.setAlignment(Qt.AlignCenter)
+
+        text6.setFont(QtGui.QFont("Sanserif", 10))
+        text6.setWordWrap(True)
+        text6.setAlignment(Qt.AlignCenter)
+
+        text7.setFont(QtGui.QFont("Sanserif", 10))
+        text7.setWordWrap(True)
+        text7.setAlignment(Qt.AlignCenter)
+
+        text8.setFont(QtGui.QFont("Sanserif", 10))
+        text8.setWordWrap(True)
+        text8.setAlignment(Qt.AlignCenter)
+
+        text9.setFont(QtGui.QFont("Sanserif", 10))
+        text9.setWordWrap(True)
+        text9.setAlignment(Qt.AlignCenter)
+
         quadDrawTextLayout.addWidget(text)
         quadDrawTextLayout.addWidget(text2)
+        quadDrawTextLayout.addWidget(text3)
+        quadDrawTextLayout.addWidget(text4)
+        quadDrawTextLayout.addWidget(text5)
+        quadDrawTextLayout.addWidget(text6)
+        quadDrawTextLayout.addWidget(text7)
+        quadDrawTextLayout.addWidget(text8)
+        quadDrawTextLayout.addWidget(text9)
 
         self.QuadDrawLayout.addWidget(quadDrawTextGroup)
 

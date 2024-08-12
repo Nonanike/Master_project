@@ -67,6 +67,13 @@ class quadDrawTab():
         Mm.eval("maintainActiveChangeSelectMode pSphere1 0;")
         cmds.select("polySurface1")
 
+    def mirror(self):
+        
+        self.mesh = cmds.ls(sl=True, fl=True)
+        cmds.select(self.mesh)
+        cmds.MirrorPolygonGeometry()
+        cmds.setAttr("polyMirror1.axisDirection", 0)
+
 ############
 
     def colorCopyMesh(self):
