@@ -14,6 +14,7 @@ mayaLocations = {"Linux": "/maya/", "Windows": "/Documents/maya/"}
 def installModules(mayaLoc, opSys):
    location = pathlib.Path(mayaLoc)
    createMod(location)
+   moveShelfScript(location, opSys)
 
 
 def createMod(location):
