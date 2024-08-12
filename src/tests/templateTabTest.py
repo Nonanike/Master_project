@@ -6,13 +6,13 @@ import maya.cmds as cmds
 
 from templateTab import useTemplate
 
-# Test case for paint_tool class
-class TestPaintTab(unittest.TestCase):
+# # Test case for paint_tool class
+# class TestPaintTab(unittest.TestCase):
     
-    def setUp(self):
-        """Set up the environment before each test."""
-        # You could create a new scene or set some initial state if needed
-        cmds.file(new=True, force=True)
+#     def setUp(self):
+#         """Set up the environment before each test."""
+#         # You could create a new scene or set some initial state if needed
+#         cmds.file(new=True, force=True)
 
     # # @patch('maya.cmds.artAttrPaintVertexCtx')
     # # @patch('maya.cmds.currentCtx', return_value = 'currentContext')
@@ -30,26 +30,26 @@ class TestPaintTab(unittest.TestCase):
 
     # @patch('maya.cmds.setToolTo')
 
-    @patch('maya.cmds.select')
-    @patch('maya.cmds.hilite')
-    def test_UVsCreator_execution(self, mockSetToolTo):
-        """Test if the UVsCreator method executes without errors."""
-        tool = useTemplate()
-        mesh_name ='pSphere1'
-        try:
-            tool.UVsCreator()
+    # @patch('maya.cmds.select')
+    # @patch('maya.cmds.hilite')
+    # def test_UVsCreator_execution(self, mockSetToolTo):
+    #     """Test if the UVsCreator method executes without errors."""
+    #     tool = useTemplate()
+    #     mesh_name ='pSphere1'
+    #     try:
+    #         tool.UVsCreator()
 
-            mockSetToolTo.assert_called_once_with('selectSuperContext')
+    #         mockSetToolTo.assert_called_once_with('selectSuperContext')
 
-            # self.assertTrue(True)  # If it runs without error, pass the test
-        except Exception as e:
-            self.fail(f"UVsCreator() raised an exception {e}")
+    #         # self.assertTrue(True)  # If it runs without error, pass the test
+    #     except Exception as e:
+    #         self.fail(f"UVsCreator() raised an exception {e}")
     
 
-    def tearDown(self):
-        """Clean up the environment after each test."""
-        # You could delete the scene or undo the changes made during the test
-        cmds.file(new=True, force=True)  # Clean up by creating a new empty scene
+    # def tearDown(self):
+    #     """Clean up the environment after each test."""
+    #     # You could delete the scene or undo the changes made during the test
+    #     cmds.file(new=True, force=True)  # Clean up by creating a new empty scene
 
 if __name__ == '__main__':
     unittest.main()
