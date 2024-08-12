@@ -29,7 +29,7 @@ def createMod(location):
        with open(modulePath, "w") as file:
            file.write(f"+ MayaPaintRetoTool 1.0 {currentDir}\n")
            file.write("MAYA_PLUG_IN_PATH +:= plugins\n")
-           file.write("PYTHONPATH +:= src\n")
+           file.write("PYTHONPATH +:= python\n")
            file.write("ICONS +:= images")
    print("module installed")
 
