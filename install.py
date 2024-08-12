@@ -33,6 +33,28 @@ def createMod(location):
            file.write("ICONS +:= images")
    print("module installed")
 
+
+def moveShelfScript(location, opSys):
+   currentDir = pathlib.Path.cwd()
+   shelfDir = pathlib.Path.joinpath(currentDir, "installScripts")
+   shelfFile = pathlib.Path.joinpath(shelfDir, "shelf_PaintAndRetopologyTool.mel")
+   locationShelfFile = pathlib.Path.joinpath(location, "2023/prefs")
+   locationShelfFile = pathlib.Path.joinpath(locationShelfFile, "shelves")
+#    path = pathlib.Path(locationShelfFile)
+
+   locationShelfFile.mkdir(exist_ok=True)
+
+   if opSys == "Linux":
+       command = f"cp {shelfFile} {locationShelfFile}"
+       subprocess.run(command, shell=True)
+   if opSys == "Windows":
+       pathlib.WindowsPath(shelfFile)
+       pathlib.WindowsPath(locationShelfFile)
+       command = f"copy {shelfFile} {locationShelfFile}"
+       subprocess.run(command, shell=True)
+   print("shelf file copied")
+
+
 def checkMayaInstalled(opSys):
    mayaLoc = f"{pathlib.Path.home()}{mayaLocations.get(opSys)}"
    if not os.path.isdir(mayaLoc):

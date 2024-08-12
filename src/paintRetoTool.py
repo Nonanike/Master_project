@@ -1,11 +1,7 @@
 import maya.cmds as cmds
-# import maya.OpenMaya as OpenMaya
-# import maya.api.OpenMayaUI as OpenMayaUI
 import maya.OpenMayaUI as OpenMayaUI
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 import maya.mel as Mm
-#import math
-import sys
 import os
 
 from paintTab import PaintTab
@@ -14,22 +10,31 @@ from exampleTab import exampleTab
 from templateTab import useTemplate
 
 from shiboken2 import wrapInstance
-from PySide2 import QtWidgets, QtGui, QtCore
-from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QSpacerItem, QSizePolicy, QLineEdit, QCheckBox
-import sys
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2 import QtWidgets, QtGui
+from PySide2.QtWidgets import QLabel, QSlider, QLineEdit, QCheckBox
+from PySide2.QtGui import QPixmap
 from PySide2.QtCore import Qt
 from PySide2 import QtGui
 
 
 # Gets maya main window
 def getMainWindow():
+   """
+   Creates a main window
+
+   Return: wrapInstance
+   """
    window = OpenMayaUI.MQtUtil.mainWindow()
    return wrapInstance(int(window), QtWidgets.QDialog)
 
 class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
     def __init__(self, parent=getMainWindow()):
+        """
+        Main Maya Dialog window that uses grid layout
+        and holds all the tabs
+        """
+        
         super(MayaPaintRetoToolDialog, self).__init__()
 
         self.paintTab_instance = PaintTab()
@@ -61,7 +66,10 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.copied = False
         
     def selectOptions(self):
-
+        """
+        Creates a group for two select buttons
+        that are part of the main layout
+        """
         selectGroup = QtWidgets.QGroupBox()
 
         selectLayout = QtWidgets.QGridLayout()
@@ -88,7 +96,12 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.mainLayout.addWidget(selectGroup)
 
     def diasableAllButtons(self):
-
+        """
+        Iterates throught all the buttons in different tabs
+        and disables or hides most of them except for the ones not added 
+        to the allButtons and allColorButtons lists
+        """
+        
         self.selectMeshButton.setEnabled(True)
 
         for button in self.allButtons:
@@ -99,6 +112,13 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             colors.hide()
 
     def enableButtonsAfterClickSelect(self):
+        """
+        Iterates throught all the buttons in different tabs
+        and enables most of them except for the ones not added 
+        to the allButtons list and the one in 
+        allColorButtons list which stays disabled and hidden
+        It also sets the selectMeshButton False
+        """
         
         self.selectMeshButton.setEnabled(False)
 
@@ -110,6 +130,9 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             colors.hide()
 
     def examplesTab(self):
+        """Holds and displays two groups:
+        exampleText and exampleImages
+        """
 
         examplesTabBody = QtWidgets.QWidget()
         self.tabMenu.addTab(examplesTabBody, "Examples")
@@ -121,7 +144,11 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.exampleImages()
 
     def exampleText(self):
-
+        """
+        Creates a layout with a text with important 
+        informations and explanation
+        """
+        
         exampleTextGroup = QtWidgets.QGroupBox("Explanation")
 
         exampleTextLayout = QtWidgets.QGridLayout()
@@ -148,6 +175,12 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.examplesLayout.addWidget(exampleTextGroup)
 
     def relativePath(self, relPath):
+        """
+        Finds the current path and combines it with 
+        the provided relative path to create an imagePath
+        
+        Return: imagePath
+        """
 
         scriptDir = os.path.dirname(os.path.abspath(__file__))
         imagePath = os.path.join(scriptDir, relPath)
@@ -155,6 +188,10 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         return imagePath
 
     def exampleImages(self):
+        """
+        Creates a grid layout with example images and buttons 
+        with options to create image planes with them in Maya
+        """
 
         imagesGroup = QtWidgets.QGroupBox("Examples")
 
@@ -488,6 +525,9 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.brushLayout.addWidget(symmetryGroup)
 
     def templateTab(self):
+        """
+
+        """
 
         templateTabBody = QtWidgets.QWidget()
         self.tabMenu.addTab(templateTabBody, "Use reference template")
@@ -499,7 +539,10 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.templateImages()
 
     def templateText(self):
+        """
 
+        """
+        
         templateTextGroup = QtWidgets.QGroupBox("Explanation")
 
         templateTextLayout = QtWidgets.QGridLayout()
@@ -526,7 +569,10 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.templateLayout.addWidget(templateTextGroup)
 
     def templateImages(self):
+        """
 
+        """
+        
         templateImagesGroup = QtWidgets.QGroupBox("Templates")
 
         templateImagesLayout = QtWidgets.QGridLayout()
@@ -602,6 +648,9 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         
     def QuadDrawTab(self):
+        """
+        QuadDrawTab
+        """
         
         QuadDrawTabBody = QtWidgets.QWidget()
         self.tabMenu.addTab(QuadDrawTabBody, "QuadDraw tab")
@@ -613,7 +662,11 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.quadDrawText()
 
     def quadDrawTool(self):
-
+        """
+        Creates a grid for QuadDraw tab buttons: Start, Focus, Mirror, Done
+        and all the color buttons
+        """
+        
         self.allColorButtons = []
 
         quadDrawGroup = QtWidgets.QGroupBox("QuadDraw tool")
@@ -626,7 +679,6 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.QuadDrawStartButton = QtWidgets.QPushButton("START")
         self.QuadDrawStartButton.clicked.connect(self.QuadDrawTab_instance.quadDrawTool) 
         self.QuadDrawStartButton.clicked.connect(self.disableSTART)
-        # self.QuadDrawStartButton.clicked.connect(self.enableFocus)
         self.QuadDrawStartButton.clicked.connect(self.disableColors)
         self.QuadDrawStartButton.setFixedWidth(150)
 
@@ -704,9 +756,8 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         quadLayout.addWidget(self.QuadPinkButton, 4, 1)
         quadLayout.addWidget(self.QuadPurpleButton, 4, 2)
 
-        quadLayout.addWidget(self.mirrorButton, 5, 1)
-
-        quadLayout.addWidget(self.QuadDrawDoneButton, 6, 1)
+        quadLayout.addWidget(self.QuadDrawDoneButton, 5, 1)
+        quadLayout.addWidget(self.mirrorButton, 6, 1)
 
         self.QuadDrawLayout.addWidget(quadDrawGroup)
 
@@ -714,15 +765,29 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.allColorButtons += [self.QuadBlackButton, self.QuadWhiteButton, self.QuadRedButton, self.QuadGreenButton, self.QuadBlueButton, self.QuadYellowButton, self.QuadOrangeButton, self.QuadPinkButton, self.QuadPurpleButton]
 
     def enableSTART(self):
+        """ 
+        Enables QuadDrawStartButton while
+        disabling QuadFocusButton
+        """
+        
         self.QuadDrawStartButton.setEnabled(True)
         self.QuadFocusButton.setEnabled(False)
 
     def disableSTART(self):
+        """
+        Disables QuadDrawStartButton while
+        enabling QuadFocusButton
+        """
+        
         self.QuadDrawStartButton.setEnabled(False)
         self.QuadFocusButton.setEnabled(True)
 
     def enableColors(self):
-
+        """
+        Iterates through all the color buttons from QuadDraw
+        to enable and show each of them
+        """
+        
         self.QuadFocusButton.setEnabled(False)
 
         for button in self.allColorButtons:
@@ -730,24 +795,40 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             button.setEnabled(True)
 
     def disableColors(self):
-
+        """
+        Iterates through all the color buttons from QuadDraw tab
+        and disables and hides them all
+        """
         for button in self.allColorButtons:
             button.setEnabled(False)
             button.hide()
 
     def hideFocusButton(self):
-
+        """
+        Hides QuadFocusButton and disables
+        Paint tab
+        """
         self.QuadFocusButton.hide()
         self.tabMenu.setTabEnabled(1, False)
 
     def unhidePaintTab(self):
+        """
+        Enables the Paint tab a
+        """
         self.tabMenu.setTabEnabled(1, True)
         self.tabMenu.setCurrentIndex(1)
 
     def resetPaintTab(self):
+        """
+        Enables the Paint tab when Select a New Mesh button is clicked
+        """
         self.tabMenu.setTabEnabled(1, True)
 
     def quadDrawText(self):
+        """
+        Creates a layout with a text with important 
+        informations and reminders
+        """
 
         quadDrawTextGroup = QtWidgets.QGroupBox("Reminder")
 
@@ -774,10 +855,6 @@ class MayaPaintRetoToolDialog(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         text3.setFont(QtGui.QFont("Sanserif", 10))
         text3.setWordWrap(True)
-        text3.setAlignment(Qt.AlignCenter)
-
-        text4.setFont(QtGui.QFont("Sanserif", 10))
-        text4.setWordWrap(True)
         text4.setAlignment(Qt.AlignCenter)
 
         text5.setFont(QtGui.QFont("Sanserif", 10))

@@ -6,7 +6,10 @@ class quadDrawTab():
     copied = False
 
     def saveMesh(self):
+        """Saves selcted mesh as self. mesh and assigns it color
 
+        Return: self.mesh
+        """
         self.mesh = cmds.ls(sl=True, fl=True)
         print(self.mesh)
 
@@ -18,7 +21,13 @@ class quadDrawTab():
         return self.mesh
     
     def duplicateMesh(self):
+        """
+        Creates a duplicate of the saved mesh and puts 
+        the orignal geometry on a display layer while setting it 
+        to be invisible and unelectable
         
+        Return: self.duplicated
+        """
         self.mesh = cmds.ls(sl=True, fl=True)
 
         cmds.select(self.mesh)
@@ -37,7 +46,10 @@ class quadDrawTab():
         return self.duplicated
 
     def quadDrawTool(self):
-
+        """
+        Calls on duplicateMesh and then makes the duplicate live
+        in order to use QuadDraw Tool
+        """
         duplicated = self.duplicateMesh()
         cmds.select(duplicated)
 
@@ -48,7 +60,10 @@ class quadDrawTab():
         cmds.nexQuadDrawCtx()
               
     def deleteDuplicated(self):
-
+        """
+        Deletes the duplicate and the display layer
+        created in duplicateMesh
+        """
         cmds.makeLive(none=True)
 
         cmds.setToolTo("selectSuperContext")
@@ -63,28 +78,29 @@ class quadDrawTab():
 
         cmds.select(self.mesh)
         cmds.scale(0.9, 0.9, 0.9)
-        # cmds.translate()
+
         Mm.eval("maintainActiveChangeSelectMode pSphere1 0;")
         cmds.select("polySurface1")
 
     def mirror(self):
-        
+        """
+        Calls on mirror function from Maya
+        """
         self.mesh = cmds.ls(sl=True, fl=True)
         cmds.select(self.mesh)
         cmds.MirrorPolygonGeometry()
         cmds.setAttr("polyMirror1.axisDirection", 0)
 
-############
-
     def colorCopyMesh(self):
+        """Creates copy of the saved mesh and 
+        puts it on the display layer to make it visible but unelectable
 
-        # self.mesh = cmds.ls(sl=True, fl=True)
-
+        Return: self.colorCopy
+        """
         cmds.select(self.mesh)
    
         self.colorCopy = cmds.duplicate(name="colorCopy")
 
-        # cmds.select(clear = True)
         cmds.select(self.colorCopy)
 
         cmds.createDisplayLayer(name="color_copy")
@@ -95,7 +111,10 @@ class quadDrawTab():
         return self.colorCopy
 
     def groupAndCopyVertices(self, color):
-
+        """
+        Selects all the vertices of the saved mesh and iterates 
+        through each of them to group based on their assigned color values
+        """
         cmds.select(self.colorCopy)
 
         # if selection:
@@ -103,26 +122,25 @@ class quadDrawTab():
         # Get the vertices of the mesh
         vertices = cmds.ls(mesh + ".vtx[*]", fl=True)
 
-        # Groups for each color
+        # Group for each color
         group = []
 
         # Get the colour info of each vertex
         for vertex in vertices:
             colorVal = cmds.polyColorPerVertex(vertex, query=True, rgb=True)
-            # print(f"Vertex: {vertex}, Color: {colorVal}")
-
-            # # Grouping vertices into right groups depending on colors
 
             if colorVal == color:
                 group.append(vertex)
-                # print("group: ", group)
 
             cmds.select(group)
-            # cmds.InvertSelection()
             cmds.ConvertSelectionToFaces()
 
     def quadToolColor(self, R, G, B):
-
+        """
+        Calls deleteCopyColor and groupAndCopyVertices to delete the selected faces 
+        of the copied mesh in a chosen color, colors the rest in rgb=(0.4, 0.4, 0.4)
+        and scales it up a bit in order to allow the user to only focus on their chosen color
+        """
         self.deleteCopyColor()
         
         copyColor = self.colorCopyMesh()
@@ -137,6 +155,11 @@ class quadDrawTab():
         quadDrawTab.copied = True
                 
     def deleteCopyColor(self):
+        """
+        Checks if there is already copied mesh "colorCopy"
+        and if that is true then it deletes it and sets
+        the condition to False
+        """
 
         if quadDrawTab.copied == True:
 
@@ -145,8 +168,6 @@ class quadDrawTab():
             cmds.delete("colorCopy")
 
             Mm.eval("layerEditorDeleteLayer color_copy")
-
-            # cmds.select(self.mesh)
 
             quadDrawTab.copied = False
 
