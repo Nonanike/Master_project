@@ -74,10 +74,7 @@ There are tests inside 'src/tests' folder. In order to run tests paste each of t
 		/plugins
 			/paintRetoToolPlugin.py
 		/src
-			/images
-[![IMAGE ALT TEXT HERE](https://www.youtube.com/watch?v=0A1y_af8oH8)
-
-   
+			/images 
 			/tests
 			/exampleTab.py
 			/paintRetoTool.py
